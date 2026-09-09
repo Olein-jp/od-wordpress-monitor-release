@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'olein/od-wordpress-monitor',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => null,
+        'type' => 'wordpress-plugin',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
+    ),
+    'versions' => array(
+        'erusev/parsedown' => array(
+            'pretty_version' => '1.8.0',
+            'version' => '1.8.0.0',
+            'reference' => '96baaad00f71ba04d76e45b4620f54d3beabd6f7',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../erusev/parsedown',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'inc2734/wp-github-plugin-updater' => array(
+            'pretty_version' => '3.1.17',
+            'version' => '3.1.17.0',
+            'reference' => '697604eec2ccfebf3cde87afb3836ab892f889f3',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../inc2734/wp-github-plugin-updater',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'olein/od-wordpress-monitor' => array(
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => null,
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);
