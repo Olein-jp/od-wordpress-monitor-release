@@ -10,8 +10,11 @@ namespace Olein\WordPressMonitor;
 use Olein\WordPressMonitor\Activation\DatabaseMigrator;
 use Olein\WordPressMonitor\Admin\AddSitePage;
 use Olein\WordPressMonitor\Admin\Admin;
+use Olein\WordPressMonitor\Admin\DashboardPage;
 use Olein\WordPressMonitor\Admin\NotificationSettingsPage;
+use Olein\WordPressMonitor\Admin\SiteDetailPage;
 use Olein\WordPressMonitor\Admin\SitesPage;
+use Olein\WordPressMonitor\Admin\StatusOverview;
 use Olein\WordPressMonitor\Credential\CredentialEncryptor;
 use Olein\WordPressMonitor\Credential\CredentialRepository;
 use Olein\WordPressMonitor\Credential\CredentialService;
@@ -67,6 +70,7 @@ final class Plugin {
 			$agent_client          = new AgentClient( $http_client, new ResponseValidator() );
 			$checks                = new CheckRepository( $wpdb );
 			$events                = new EventRepository( $wpdb );
+			$statuses              = new SiteStatusRepository( $wpdb );
 			$notification_settings = new NotificationSettings();
 			$notifications         = new NotificationManager(
 				$notification_settings,
@@ -76,7 +80,7 @@ final class Plugin {
 			$recorder              = new CheckResultRecorder(
 				$wpdb,
 				$checks,
-				new SiteStatusRepository( $wpdb ),
+				$statuses,
 				$events,
 				new StatusEvaluator(),
 				new StateTransition(),
@@ -111,8 +115,12 @@ final class Plugin {
 				new UUID()
 			);
 
+			$overview = new StatusOverview( $sites, $statuses );
+
 			( new Admin(
-				new SitesPage( $sites, $service ),
+				new DashboardPage( $overview ),
+				new SitesPage( $overview, $service ),
+				new SiteDetailPage( $sites, $statuses, $checks, $events, $service ),
 				new AddSitePage( $service ),
 				new NotificationSettingsPage( $notification_settings )
 			) )->register_hooks();
