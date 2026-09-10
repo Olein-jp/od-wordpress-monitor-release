@@ -41,6 +41,7 @@ return array(
     'Olein\\WordPressMonitor\\Monitor\\Monitoring\\AgentPingMonitor' => $baseDir . '/src/Monitor/Monitoring/AgentPingMonitor.php',
     'Olein\\WordPressMonitor\\Monitor\\Monitoring\\AgentStatusMonitor' => $baseDir . '/src/Monitor/Monitoring/AgentStatusMonitor.php',
     'Olein\\WordPressMonitor\\Monitor\\Monitoring\\HttpMonitor' => $baseDir . '/src/Monitor/Monitoring/HttpMonitor.php',
+    'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SiteHealthMonitor' => $baseDir . '/src/Monitor/Monitoring/SiteHealthMonitor.php',
     'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SslCertificateClient' => $baseDir . '/src/Monitor/Monitoring/SslCertificateClient.php',
     'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SslCertificateClientInterface' => $baseDir . '/src/Monitor/Monitoring/SslCertificateClientInterface.php',
     'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SslMonitor' => $baseDir . '/src/Monitor/Monitoring/SslMonitor.php',

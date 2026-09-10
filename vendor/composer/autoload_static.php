@@ -74,6 +74,7 @@ class ComposerStaticInitda9244b3ff2ba444c2cd5e89e041c6f2
         'Olein\\WordPressMonitor\\Monitor\\Monitoring\\AgentPingMonitor' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/AgentPingMonitor.php',
         'Olein\\WordPressMonitor\\Monitor\\Monitoring\\AgentStatusMonitor' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/AgentStatusMonitor.php',
         'Olein\\WordPressMonitor\\Monitor\\Monitoring\\HttpMonitor' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/HttpMonitor.php',
+        'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SiteHealthMonitor' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/SiteHealthMonitor.php',
         'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SslCertificateClient' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/SslCertificateClient.php',
         'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SslCertificateClientInterface' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/SslCertificateClientInterface.php',
         'Olein\\WordPressMonitor\\Monitor\\Monitoring\\SslMonitor' => __DIR__ . '/../..' . '/src/Monitor/Monitoring/SslMonitor.php',
