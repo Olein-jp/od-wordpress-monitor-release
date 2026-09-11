@@ -8,11 +8,13 @@
 namespace Olein\WordPressMonitor\Scheduler;
 
 use Olein\WordPressMonitor\Monitor\CheckResult;
+use Throwable;
 use WP_Error;
 
 final class Scheduler {
 	public const HOOK               = 'odm_run_scheduled_check';
 	public const CLEANUP_HOOK       = 'odm_cleanup_checks';
+	public const CLEANUP_JOB        = 'cleanup';
 	public const CLEANUP_RECURRENCE = 'daily';
 
 	public const CHECK_SCHEDULES = array(
@@ -26,13 +28,16 @@ final class Scheduler {
 
 	public function __construct(
 		private readonly CheckRunner $runner,
-		private readonly ?CheckRetention $retention = null
+		private readonly ?CheckRetention $retention = null,
+		private readonly ?SchedulerHeartbeat $heartbeat = null
 	) {
 	}
 
 	public function register_hooks(): void {
 		add_filter( 'cron_schedules', array( self::class, 'add_schedules' ) ); // phpcs:ignore WordPress.WP.CronInterval.CronSchedulesInterval -- Five minutes is the explicit monitoring requirement.
 		add_action( self::HOOK, array( $this, 'run' ) );
+		add_action( RetryScheduler::HOOK, array( $this, 'retry' ), 10, 4 );
+		add_action( BatchScheduler::HOOK, array( $this, 'continue_batch' ), 10, 2 );
 
 		if ( null !== $this->retention ) {
 			add_action( self::CLEANUP_HOOK, array( $this, 'cleanup' ) );
@@ -94,6 +99,8 @@ final class Scheduler {
 		}
 
 		wp_clear_scheduled_hook( self::CLEANUP_HOOK );
+		wp_unschedule_hook( RetryScheduler::HOOK );
+		wp_unschedule_hook( BatchScheduler::HOOK );
 	}
 
 	/**
@@ -102,7 +109,42 @@ final class Scheduler {
 	 * @return list<CheckResult>
 	 */
 	public function run( string $check_type ): array {
-		return $this->runner->run( $check_type );
+		$this->heartbeat?->record_started( $check_type );
+
+		try {
+			$results = $this->runner->run( $check_type );
+		} catch ( Throwable $exception ) {
+			$this->heartbeat?->record_failed( $check_type );
+			throw $exception;
+		}
+
+		$this->heartbeat?->record_completed( $check_type, count( $results ) );
+
+		return $results;
+	}
+
+	/**
+	 * Run a single retry through the same runner and lock path as recurring checks.
+	 */
+	public function retry( int $site_id, string $site_uuid, string $check_type, int $attempt ): ?CheckResult {
+		$this->heartbeat?->record_started( $check_type );
+		$result = $this->runner->retry( $site_id, $site_uuid, $check_type, $attempt );
+		$this->heartbeat?->record_completed( $check_type, null === $result ? 0 : 1 );
+
+		return $result;
+	}
+
+	/**
+	 * Continue a bounded site traversal through the same runner path.
+	 *
+	 * @return list<CheckResult>
+	 */
+	public function continue_batch( string $check_type, string $generation ): array {
+		$this->heartbeat?->record_started( $check_type );
+		$results = $this->runner->continue_batch( $check_type, $generation );
+		$this->heartbeat?->record_completed( $check_type, count( $results ) );
+
+		return $results;
 	}
 
 	/**
@@ -111,8 +153,11 @@ final class Scheduler {
 	 * @return int|WP_Error
 	 */
 	public function cleanup(): int|WP_Error {
+		$this->heartbeat?->record_started( self::CLEANUP_JOB );
+
 		if ( null === $this->retention ) {
 			$result = new WP_Error( 'CLEANUP_UNAVAILABLE', __( 'Check cleanup is unavailable.', 'od-wordpress-monitor' ) );
+			$this->heartbeat?->record_failed( self::CLEANUP_JOB );
 			do_action( 'odm_check_cleanup_failed', $result->get_error_code() );
 
 			return $result;
@@ -121,10 +166,12 @@ final class Scheduler {
 		$result = $this->retention->cleanup();
 
 		if ( is_wp_error( $result ) ) {
+			$this->heartbeat?->record_failed( self::CLEANUP_JOB );
 			do_action( 'odm_check_cleanup_failed', $result->get_error_code() );
 			return $result;
 		}
 
+		$this->heartbeat?->record_completed( self::CLEANUP_JOB, $result );
 		do_action( 'odm_check_cleanup_completed', $result );
 
 		return $result;
