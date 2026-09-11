@@ -63,6 +63,9 @@ final class SiteDetailPage {
 			<h2><?php echo esc_html__( 'Current Status', 'od-wordpress-monitor' ); ?></h2>
 			<?php $this->render_current_status( $site, $status ); ?>
 
+			<h2><?php echo esc_html__( 'Site Health Details', 'od-wordpress-monitor' ); ?></h2>
+			<?php $this->render_site_health_details( $status ); ?>
+
 			<h2><?php echo esc_html__( 'Site Software', 'od-wordpress-monitor' ); ?></h2>
 			<?php $this->render_software_inventory( $status ); ?>
 
@@ -75,6 +78,51 @@ final class SiteDetailPage {
 		<?php
 	}
 
+	private function render_site_health_details( ?SiteStatus $status ): void {
+		$metadata    = null === $status ? array() : $status->metadata();
+		$site_health = isset( $metadata['site_health'] ) && is_array( $metadata['site_health'] ) ? $metadata['site_health'] : null;
+		?>
+		<p><?php echo esc_html__( 'The Agent Site Health check is limited to safe synchronous tests and may not exactly match the WordPress Site Health screen.', 'od-wordpress-monitor' ); ?></p>
+		<?php
+		if ( null === $site_health ) {
+			echo '<p>' . esc_html__( 'Site Health details have not yet been collected.', 'od-wordpress-monitor' ) . '</p>';
+			return;
+		}
+
+		$rows = array(
+			array( __( 'Critical problems', 'od-wordpress-monitor' ), $this->site_health_count( $site_health, 'critical' ) ),
+			array( __( 'Recommended improvements', 'od-wordpress-monitor' ), $this->site_health_count( $site_health, 'recommended' ) ),
+			array( __( 'Good results', 'od-wordpress-monitor' ), $this->site_health_count( $site_health, 'good' ) ),
+			array( __( 'Representative test ID', 'od-wordpress-monitor' ), isset( $site_health['representative_test_id'] ) && is_string( $site_health['representative_test_id'] ) && '' !== $site_health['representative_test_id'] ? $site_health['representative_test_id'] : '—' ),
+		);
+		?>
+		<table class="widefat striped">
+			<caption class="screen-reader-text"><?php echo esc_html__( 'Latest Site Health diagnostic summary', 'od-wordpress-monitor' ); ?></caption>
+			<thead><tr>
+				<th scope="col"><?php echo esc_html__( 'Item', 'od-wordpress-monitor' ); ?></th>
+				<th scope="col"><?php echo esc_html__( 'Value', 'od-wordpress-monitor' ); ?></th>
+			</tr></thead>
+			<tbody>
+				<?php foreach ( $rows as $row ) : ?>
+					<tr>
+						<th scope="row"><?php echo esc_html( $row[0] ); ?></th>
+						<td><?php echo esc_html( $row[1] ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * @param array<string|int,mixed> $metadata Site Health metadata.
+	 */
+	private function site_health_count( array $metadata, string $key ): string {
+		return isset( $metadata[ $key ] ) && is_int( $metadata[ $key ] ) && 0 <= $metadata[ $key ]
+			? (string) $metadata[ $key ]
+			: '—';
+	}
+
 	private function render_software_inventory( ?SiteStatus $status ): void {
 		$metadata  = null === $status ? array() : $status->metadata();
 		$updates   = isset( $metadata['updates'] ) && is_array( $metadata['updates'] ) ? $metadata['updates'] : array();
@@ -85,43 +133,45 @@ final class SiteDetailPage {
 			return;
 		}
 
-		$wordpress_version = isset( $inventory['wordpress_version'] ) && is_string( $inventory['wordpress_version'] ) ? $inventory['wordpress_version'] : '—';
-		$theme             = isset( $inventory['theme'] ) && is_array( $inventory['theme'] ) ? $inventory['theme'] : null;
-		$plugins           = isset( $inventory['plugins'] ) && is_array( $inventory['plugins'] ) && array_is_list( $inventory['plugins'] ) ? $inventory['plugins'] : array();
-		$collected_at      = isset( $inventory['collected_at'] ) && is_string( $inventory['collected_at'] ) ? $this->parse_inventory_date( $inventory['collected_at'] ) : null;
+		$theme        = isset( $inventory['theme'] ) && is_array( $inventory['theme'] ) ? $inventory['theme'] : null;
+		$plugins      = isset( $inventory['plugins'] ) && is_array( $inventory['plugins'] ) && array_is_list( $inventory['plugins'] ) ? $inventory['plugins'] : array();
+		$collected_at = isset( $inventory['collected_at'] ) && is_string( $inventory['collected_at'] ) ? $this->parse_inventory_date( $inventory['collected_at'] ) : null;
 		?>
 		<p>
 			<?php echo esc_html__( 'Last collected:', 'od-wordpress-monitor' ); ?>
 			<?php $this->render_date( $collected_at ); ?>
 		</p>
 		<table class="widefat striped">
-			<caption class="screen-reader-text"><?php echo esc_html__( 'Active site software and current versions', 'od-wordpress-monitor' ); ?></caption>
+			<caption class="screen-reader-text"><?php echo esc_html__( 'Active theme and plugins with update availability', 'od-wordpress-monitor' ); ?></caption>
 			<thead><tr>
 				<th scope="col"><?php echo esc_html__( 'Type', 'od-wordpress-monitor' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Name', 'od-wordpress-monitor' ); ?></th>
-				<th scope="col"><?php echo esc_html__( 'Version', 'od-wordpress-monitor' ); ?></th>
+				<th scope="col"><?php echo esc_html__( 'Current version', 'od-wordpress-monitor' ); ?></th>
+				<th scope="col"><?php echo esc_html__( 'Update status', 'od-wordpress-monitor' ); ?></th>
+				<th scope="col"><?php echo esc_html__( 'Available version', 'od-wordpress-monitor' ); ?></th>
 			</tr></thead>
 			<tbody>
-				<tr>
-					<th scope="row"><?php echo esc_html__( 'WordPress', 'od-wordpress-monitor' ); ?></th>
-					<td><?php echo esc_html__( 'WordPress', 'od-wordpress-monitor' ); ?></td>
-					<td><?php echo esc_html( $wordpress_version ); ?></td>
-				</tr>
+				<?php $theme_update = $this->software_update_details( $theme ); ?>
 				<tr>
 					<th scope="row"><?php echo esc_html__( 'Theme', 'od-wordpress-monitor' ); ?></th>
 					<td><?php echo esc_html( null !== $theme && isset( $theme['name'] ) && is_string( $theme['name'] ) ? $theme['name'] : '—' ); ?></td>
-					<td><?php echo esc_html( null !== $theme && isset( $theme['version'] ) && is_string( $theme['version'] ) && '' !== $theme['version'] ? $theme['version'] : '—' ); ?></td>
+					<td><?php echo esc_html( $theme_update['current_version'] ); ?></td>
+					<td><?php echo esc_html( $theme_update['status'] ); ?></td>
+					<td><?php echo esc_html( $theme_update['available_version'] ); ?></td>
 				</tr>
 				<?php foreach ( $plugins as $plugin ) : ?>
 					<?php
 					if ( ! is_array( $plugin ) ) {
 						continue;
 					}
+					$plugin_update = $this->software_update_details( $plugin );
 					?>
 					<tr>
 						<th scope="row"><?php echo esc_html__( 'Plugin', 'od-wordpress-monitor' ); ?></th>
 						<td><?php echo esc_html( isset( $plugin['name'] ) && is_string( $plugin['name'] ) ? $plugin['name'] : '—' ); ?></td>
-						<td><?php echo esc_html( isset( $plugin['version'] ) && is_string( $plugin['version'] ) && '' !== $plugin['version'] ? $plugin['version'] : '—' ); ?></td>
+						<td><?php echo esc_html( $plugin_update['current_version'] ); ?></td>
+						<td><?php echo esc_html( $plugin_update['status'] ); ?></td>
+						<td><?php echo esc_html( $plugin_update['available_version'] ); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -130,6 +180,41 @@ final class SiteDetailPage {
 			<p><?php echo esc_html__( 'Only the first 100 active plugins are shown.', 'od-wordpress-monitor' ); ?></p>
 		<?php endif; ?>
 		<?php
+	}
+
+	/**
+	 * @param array<string|int,mixed>|null $item Stored software item.
+	 * @return array{current_version:string,status:string,available_version:string}
+	 */
+	private function software_update_details( ?array $item ): array {
+		$current_version = null !== $item && isset( $item['current_version'] ) && is_string( $item['current_version'] )
+			? $item['current_version']
+			: ( null !== $item && isset( $item['version'] ) && is_string( $item['version'] ) ? $item['version'] : '' );
+		$current_version = '' !== $current_version ? $current_version : '—';
+
+		if (
+			null === $item
+			|| ! isset( $item['update_available'], $item['latest_version'] )
+			|| ! is_bool( $item['update_available'] )
+			|| ! is_string( $item['latest_version'] )
+		) {
+			return array(
+				'current_version'   => $current_version,
+				'status'            => __( 'Unknown', 'od-wordpress-monitor' ),
+				'available_version' => '—',
+			);
+		}
+
+		$update_available = $item['update_available'];
+		$latest_version   = '' !== $item['latest_version']
+			? $item['latest_version']
+			: '—';
+
+		return array(
+			'current_version'   => $current_version,
+			'status'            => $update_available ? __( 'Update available', 'od-wordpress-monitor' ) : __( 'Latest', 'od-wordpress-monitor' ),
+			'available_version' => $update_available ? $latest_version : '—',
+		);
 	}
 
 	private function parse_inventory_date( string $date ): ?DateTimeImmutable {
@@ -190,6 +275,8 @@ final class SiteDetailPage {
 	 * @param list<MonitoringEvent> $events Recent events.
 	 */
 	private function render_events( array $events ): void {
+		echo '<p>' . esc_html__( 'Recent Events is a history of state changes and may include problems that are no longer active.', 'od-wordpress-monitor' ) . '</p>';
+
 		if ( array() === $events ) {
 			echo '<p>' . esc_html__( 'No events have been recorded.', 'od-wordpress-monitor' ) . '</p>';
 			return;
@@ -315,6 +402,7 @@ final class SiteDetailPage {
 			EventType::AGENT                 => __( 'Agent', 'od-wordpress-monitor' ),
 			EventType::UPDATES               => __( 'Updates', 'od-wordpress-monitor' ),
 			EventType::SITE_HEALTH_CRITICAL  => __( 'Site Health problem', 'od-wordpress-monitor' ),
+			EventType::SITE_HEALTH_PARTIALLY_RECOVERED => __( 'Site Health partially recovered', 'od-wordpress-monitor' ),
 			EventType::SITE_HEALTH_RECOVERED => __( 'Site Health recovered', 'od-wordpress-monitor' ),
 			EventType::SSL                   => __( 'SSL', 'od-wordpress-monitor' ),
 			default                          => __( 'Unknown event', 'od-wordpress-monitor' ),
