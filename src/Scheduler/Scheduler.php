@@ -8,6 +8,9 @@
 namespace Olein\WordPressMonitor\Scheduler;
 
 use Olein\WordPressMonitor\Monitor\CheckResult;
+use Olein\WordPressMonitor\Notification\DailyDigest;
+use Olein\WordPressMonitor\Notification\NotificationDeliveryResult;
+use Olein\WordPressMonitor\Notification\NotificationDeliveryRetry;
 use Throwable;
 use WP_Error;
 
@@ -16,6 +19,8 @@ final class Scheduler {
 	public const CLEANUP_HOOK       = 'odm_cleanup_checks';
 	public const CLEANUP_JOB        = 'cleanup';
 	public const CLEANUP_RECURRENCE = 'daily';
+	public const DIGEST_HOOK        = 'odm_send_notification_digest';
+	public const DIGEST_RECURRENCE  = 'hourly';
 
 	public const CHECK_SCHEDULES = array(
 		'http'         => 'odm_five_minutes',
@@ -29,7 +34,9 @@ final class Scheduler {
 	public function __construct(
 		private readonly CheckRunner $runner,
 		private readonly ?CheckRetention $retention = null,
-		private readonly ?SchedulerHeartbeat $heartbeat = null
+		private readonly ?SchedulerHeartbeat $heartbeat = null,
+		private readonly ?DailyDigest $daily_digest = null,
+		private readonly ?NotificationDeliveryRetry $notification_retry = null
 	) {
 	}
 
@@ -38,9 +45,16 @@ final class Scheduler {
 		add_action( self::HOOK, array( $this, 'run' ) );
 		add_action( RetryScheduler::HOOK, array( $this, 'retry' ), 10, 4 );
 		add_action( BatchScheduler::HOOK, array( $this, 'continue_batch' ), 10, 2 );
+		if ( null !== $this->notification_retry ) {
+			add_action( NotificationDeliveryRetry::HOOK, array( $this->notification_retry, 'run' ), 10, 2 );
+		}
 
 		if ( null !== $this->retention ) {
 			add_action( self::CLEANUP_HOOK, array( $this, 'cleanup' ) );
+		}
+
+		if ( null !== $this->daily_digest ) {
+			add_action( self::DIGEST_HOOK, array( $this, 'digest' ) );
 		}
 
 		self::ensure_scheduled();
@@ -88,6 +102,14 @@ final class Scheduler {
 				self::CLEANUP_HOOK
 			);
 		}
+
+		if ( false === wp_next_scheduled( self::DIGEST_HOOK ) && isset( $schedules[ self::DIGEST_RECURRENCE ] ) ) {
+			wp_schedule_event(
+				time() + $schedules[ self::DIGEST_RECURRENCE ]['interval'],
+				self::DIGEST_RECURRENCE,
+				self::DIGEST_HOOK
+			);
+		}
 	}
 
 	/**
@@ -99,8 +121,10 @@ final class Scheduler {
 		}
 
 		wp_clear_scheduled_hook( self::CLEANUP_HOOK );
+		wp_clear_scheduled_hook( self::DIGEST_HOOK );
 		wp_unschedule_hook( RetryScheduler::HOOK );
 		wp_unschedule_hook( BatchScheduler::HOOK );
+		wp_unschedule_hook( NotificationDeliveryRetry::HOOK );
 	}
 
 	/**
@@ -175,5 +199,9 @@ final class Scheduler {
 		do_action( 'odm_check_cleanup_completed', $result );
 
 		return $result;
+	}
+
+	public function digest(): ?NotificationDeliveryResult {
+		return $this->daily_digest?->run();
 	}
 }

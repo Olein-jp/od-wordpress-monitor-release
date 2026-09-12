@@ -1,6 +1,6 @@
 <?php
 /**
- * Plain-text email notification delivery.
+ * Plain-text formatting shared by webhook channels.
  *
  * @package OD_WordPress_Monitor
  */
@@ -8,29 +8,9 @@
 namespace Olein\WordPressMonitor\Notification;
 
 use DateTimeZone;
-use Throwable;
 
-final class EmailNotifier implements NotificationSenderInterface {
-	public const CHANNEL_ID = 'email';
-
-	public function __construct( private readonly NotificationSettings $settings ) {
-	}
-
-	public function channel_id(): string {
-		return self::CHANNEL_ID;
-	}
-
-	public function enabled(): bool {
-		return $this->settings->enabled() && '' !== $this->settings->email();
-	}
-
-	public function send( NotificationMessage $message ): NotificationChannelResult {
-		$recipient = $this->settings->email();
-
-		if ( '' === $recipient ) {
-			return NotificationChannelResult::failed( self::CHANNEL_ID, 'EMAIL_RECIPIENT_INVALID' );
-		}
-
+final class NotificationTextFormatter {
+	public function format( NotificationMessage $message ): string {
 		if ( NotificationRule::OUTAGE === $message->notification_type() ) {
 			$label = __( 'Outage', 'od-wordpress-monitor' );
 		} elseif ( NotificationRule::RECOVERY === $message->notification_type() ) {
@@ -40,20 +20,13 @@ final class EmailNotifier implements NotificationSenderInterface {
 		} elseif ( NotificationRule::DAILY_DIGEST === $message->notification_type() ) {
 			$label = __( 'Daily digest', 'od-wordpress-monitor' );
 		} else {
-			return NotificationChannelResult::failed( self::CHANNEL_ID, 'NOTIFICATION_TYPE_INVALID' );
+			return '';
 		}
 
-		$subject = sprintf(
-			/* translators: 1: Notification type, 2: monitored site name. */
-			__( '[OD Monitor] %1$s: %2$s', 'od-wordpress-monitor' ),
-			$label,
-			$message->site_name()
-		);
-		$body = implode(
+		return implode(
 			"\n",
 			array(
-				sprintf( /* translators: %s: outage or recovery. */ __( 'Notification: %s', 'od-wordpress-monitor' ), $label ),
-				sprintf( /* translators: %s: monitored site name. */ __( 'Site: %s', 'od-wordpress-monitor' ), $message->site_name() ),
+				sprintf( /* translators: 1: Notification type, 2: monitored site name. */ __( '[OD Monitor] %1$s: %2$s', 'od-wordpress-monitor' ), $label, $message->site_name() ),
 				sprintf( /* translators: %s: monitored public URL. */ __( 'URL: %s', 'od-wordpress-monitor' ), $message->site_url() ),
 				sprintf( /* translators: %s: monitoring event type. */ __( 'Event: %s', 'od-wordpress-monitor' ), $message->event_type() ),
 				sprintf( /* translators: %s: previous monitoring status. */ __( 'Previous status: %s', 'od-wordpress-monitor' ), $message->previous_status() ),
@@ -67,15 +40,5 @@ final class EmailNotifier implements NotificationSenderInterface {
 				sprintf( /* translators: %s: safe monitoring result message. */ __( 'Message: %s', 'od-wordpress-monitor' ), $message->message() ),
 			)
 		);
-
-		try {
-			return wp_mail( $recipient, $subject, $body )
-				? NotificationChannelResult::sent( self::CHANNEL_ID )
-				: NotificationChannelResult::failed( self::CHANNEL_ID, 'EMAIL_SEND_FAILED' );
-		} catch ( Throwable $exception ) {
-			unset( $exception );
-
-			return NotificationChannelResult::failed( self::CHANNEL_ID, 'EMAIL_SEND_EXCEPTION' );
-		}
 	}
 }

@@ -37,9 +37,11 @@ OD Monitor Agent を導入したWordPressサイトを登録し、接続状況、
 
 監視結果は履歴と現在状態として保存され、稼働停止、復旧、更新あり、Site Healthのcritical、SSL証明書の警告など、意味のある状態変化はイベントとして記録されます。Site Healthのrecommendedのみの状態は履歴へ保存しますが、イベントと通知は生成しません。日次cleanupは1回の処理件数を制限し、90日を超えたチェック履歴、期限切れexecution lock、期限切れのプラグイン固有transientを段階的に削除します。現在状態とイベント履歴は対象外です。
 
-## メール通知
+## Email・Slack・Discord・Chatwork通知
 
-管理画面の「WordPress Monitor」→「Notifications」で通知先メールアドレスを設定し、通知を有効化できます。正常または警告から異常へ変化したときに障害通知を送り、異常から正常へ戻ったときに復旧通知を送ります。同じ異常状態が続いている間は再送しません。
+管理画面の「WordPress Monitor」→「Notifications」で、Email、Slack Incoming Webhook、Discord Incoming Webhook、Chatworkを個別に設定・有効化できます。Chatworkはroom IDと個人APIトークンを使用します。正常または警告から異常へ変化したときに障害通知を送り、異常から正常へ戻ったときに復旧通知を送ります。同じ異常状態が続いている間は再送しません。SSL証明書の`healthy -> warning`は既定で1回だけ即時通知します。更新ありとSite Healthのrecommendedは既定で無効で、必要な場合はサイトのタイムゾーンに合わせた日次まとめを個別に有効化できます。まとめは新規または内容が変わった警告だけを含み、同じ内容を毎日繰り返しません。Webhook URLとChatwork APIトークンは暗号化して保存され、設定画面へ値を再表示しません。
+
+即時通知の配送で408・429・5xx・timeout・接続失敗が発生したチャネルは、短い遅延の後に最大1回だけ再送します。設定不備や認証エラーは自動再送せず、再送時に無効化されたチャネルも送信しません。再送ジョブにはイベントIDとチャネルIDだけを保存します。
 
 メール送信にはWordPress標準の `wp_mail()` を使用します。実際にメールを配送するには、Monitorサイト側でWordPressのメール送信環境が正しく設定されている必要があります。
 
@@ -50,6 +52,12 @@ OD Monitor Agent を導入したWordPressサイトを登録し、接続状況、
 バックアップにはMonitorの全5テーブルと関連optionを含むデータベース全体に加え、暗号鍵の導出に使われた元環境のauth saltが必要です。DBとsaltの両方を取得するとcredentialを復号できるため、分離して暗号化・アクセス制限してください。詳しい対象、手順、復元後の「Test Connection」は[運用手順](https://github.com/Olein-jp/od-wordpress-monitor/blob/main/docs/backup-and-restore.md)を参照してください。
 
 ## 変更履歴
+
+### 1.0.9
+
+- Email・Slack・Discord・Chatworkへの複数チャネル通知と、チャネルごとの配送結果記録に対応しました。
+- SSL証明書の期限警告を即時通知し、更新情報とSite Healthの推奨事項を任意の日次まとめで通知できるようにしました。
+- 一時的な通知配送失敗だけをチャネル単位で最大1回遅延再送し、成功済み通知の重複送信を防ぎます。
 
 ### 1.0.8
 
