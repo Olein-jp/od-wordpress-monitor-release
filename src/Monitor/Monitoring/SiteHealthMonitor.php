@@ -87,8 +87,7 @@ final class SiteHealthMonitor implements MonitorInterface {
 			$status  = CheckResult::STATUS_CRITICAL;
 			$message = __( 'Site Health reports a critical problem.', 'od-wordpress-monitor' );
 		} elseif ( $summary['recommended'] > 0 ) {
-			$status  = CheckResult::STATUS_WARNING;
-			$message = __( 'Site Health reports a recommended improvement.', 'od-wordpress-monitor' );
+			$message = __( 'Site Health reports recommended improvements, but no critical problems.', 'od-wordpress-monitor' );
 		}
 
 		return $this->result(

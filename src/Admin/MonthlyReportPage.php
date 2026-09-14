@@ -72,13 +72,6 @@ final class MonthlyReportPage {
 		}
 		$rows = $this->formatter->rows( $site->name(), $report );
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<input type="hidden" name="action" value="odm_export_monthly_report">
-			<input type="hidden" name="site_id" value="<?php echo esc_attr( (string) $site->id() ); ?>">
-			<input type="hidden" name="month" value="<?php echo esc_attr( $month ); ?>">
-			<?php wp_nonce_field( 'odm_export_monthly_report_' . $site->id() . '_' . $month ); ?>
-			<?php submit_button( __( 'Download CSV', 'od-wordpress-monitor' ), 'secondary', 'submit', false ); ?>
-		</form>
 		<table class="widefat striped">
 			<thead><tr>
 				<th><?php echo esc_html__( 'Section', 'od-wordpress-monitor' ); ?></th>
@@ -96,6 +89,13 @@ final class MonthlyReportPage {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="text-align: right; margin-top: 12px;">
+			<input type="hidden" name="action" value="odm_export_monthly_report">
+			<input type="hidden" name="site_id" value="<?php echo esc_attr( (string) $site->id() ); ?>">
+			<input type="hidden" name="month" value="<?php echo esc_attr( $month ); ?>">
+			<?php wp_nonce_field( 'odm_export_monthly_report_' . $site->id() . '_' . $month ); ?>
+			<?php submit_button( __( 'Download CSV', 'od-wordpress-monitor' ), 'secondary', 'submit', false ); ?>
+		</form>
 		<?php
 	}
 

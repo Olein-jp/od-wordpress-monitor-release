@@ -58,9 +58,11 @@ final class SiteDetailPage {
 			<p>
 				<a href="<?php echo esc_url( $site->site_url() ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $site->site_url() ); ?></a>
 			</p>
-			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . SitesPage::SLUG ) ); ?>">&larr; <?php echo esc_html__( 'Back to Sites', 'od-wordpress-monitor' ); ?></a></p>
-			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . EditSitePage::SLUG . '&site_id=' . $site_id ) ); ?>"><?php echo esc_html__( 'Edit Site', 'od-wordpress-monitor' ); ?></a></p>
-			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . MonthlyReportPage::SLUG . '&site_id=' . $site_id ) ); ?>"><?php echo esc_html__( 'Monthly Monitoring Report', 'od-wordpress-monitor' ); ?></a></p>
+			<p style="display: flex; flex-wrap: wrap; gap: 8px;">
+				<a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . SitesPage::SLUG ) ); ?>">&larr; <?php echo esc_html__( 'Back to Sites', 'od-wordpress-monitor' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . EditSitePage::SLUG . '&site_id=' . $site_id ) ); ?>"><?php echo esc_html__( 'Edit Site', 'od-wordpress-monitor' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . MonthlyReportPage::SLUG . '&site_id=' . $site_id ) ); ?>"><?php echo esc_html__( 'Monthly Monitoring Report', 'od-wordpress-monitor' ); ?></a>
+			</p>
 			<?php
 			if ( ! $site->enabled() ) :
 				?>
