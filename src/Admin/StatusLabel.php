@@ -21,6 +21,9 @@ final class StatusLabel {
 	 * Convert an internal status value to its user-facing label.
 	 */
 	public static function for_status( string $status ): string {
+		if ( 'paused' === $status ) {
+			return __( 'Paused', 'od-wordpress-monitor' );
+		}
 		switch ( self::normalize( $status ) ) {
 			case Status::HEALTHY:
 				return __( 'Healthy', 'od-wordpress-monitor' );

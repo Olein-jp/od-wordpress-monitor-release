@@ -26,7 +26,7 @@ final class StatusOverview {
 	 * Build a summary and severity-sorted site rows with two database queries.
 	 *
 	 * @return array{
-	 *     summary:array{total:int,healthy:int,warning:int,critical:int,unknown:int},
+	 *     summary:array{total:int,healthy:int,warning:int,critical:int,unknown:int,paused:int},
 	 *     rows:list<array{site:Site,status:?SiteStatus,overall:string}>,
 	 *     filter:string
 	 * }
@@ -45,12 +45,15 @@ final class StatusOverview {
 			'warning'  => 0,
 			'critical' => 0,
 			'unknown'  => 0,
+			'paused'   => 0,
 		);
 		$rows    = array();
 
 		foreach ( $this->sites->all() as $site ) {
 			$status  = null === $site->id() ? null : ( $statuses_by_site[ $site->id() ] ?? null );
-			$overall = StatusLabel::normalize( null === $status ? 'unknown' : $status->overall_status() );
+			$overall = $site->enabled()
+				? StatusLabel::normalize( null === $status ? 'unknown' : $status->overall_status() )
+				: 'paused';
 
 			++$summary['total'];
 			++$summary[ $overall ];
@@ -74,7 +77,7 @@ final class StatusOverview {
 	}
 
 	private function normalize_filter( string $filter ): string {
-		return self::FILTER_ALL === $filter || Status::is_valid( $filter )
+		return self::FILTER_ALL === $filter || 'paused' === $filter || Status::is_valid( $filter )
 			? $filter
 			: self::FILTER_ALL;
 	}
@@ -91,6 +94,7 @@ final class StatusOverview {
 			Status::WARNING  => 1,
 			Status::UNKNOWN  => 2,
 			Status::HEALTHY  => 3,
+			'paused'         => 4,
 		);
 		$result   = $priority[ $left['overall'] ] <=> $priority[ $right['overall'] ];
 

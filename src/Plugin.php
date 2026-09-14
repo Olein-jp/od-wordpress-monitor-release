@@ -12,7 +12,13 @@ use Olein\WordPressMonitor\Activation\DatabaseMigrator;
 use Olein\WordPressMonitor\Admin\AddSitePage;
 use Olein\WordPressMonitor\Admin\Admin;
 use Olein\WordPressMonitor\Admin\DashboardPage;
+use Olein\WordPressMonitor\Admin\EditSitePage;
 use Olein\WordPressMonitor\Admin\NotificationSettingsPage;
+use Olein\WordPressMonitor\Admin\MonthlyReportPage;
+use Olein\WordPressMonitor\Admin\AdminMenuSimplifier;
+use Olein\WordPressMonitor\Admin\MenuSettings;
+use Olein\WordPressMonitor\Admin\MenuSettingsPage;
+use Olein\WordPressMonitor\Admin\SiteNotificationSettingsPage;
 use Olein\WordPressMonitor\Admin\SiteDetailPage;
 use Olein\WordPressMonitor\Admin\SitesPage;
 use Olein\WordPressMonitor\Admin\StatusOverview;
@@ -46,12 +52,15 @@ use Olein\WordPressMonitor\Notification\NotificationMessageFactory;
 use Olein\WordPressMonitor\Notification\NotificationRule;
 use Olein\WordPressMonitor\Notification\NotificationSecretEncryptor;
 use Olein\WordPressMonitor\Notification\NotificationSettings;
+use Olein\WordPressMonitor\Notification\SiteNotificationPolicy;
 use Olein\WordPressMonitor\Notification\NotificationTestService;
 use Olein\WordPressMonitor\Notification\NotificationTextFormatter;
 use Olein\WordPressMonitor\Notification\SlackNotifier;
 use Olein\WordPressMonitor\Notification\WebhookClient;
 use Olein\WordPressMonitor\Notification\WebhookUrlValidator;
 use Olein\WordPressMonitor\Protocol\ResponseValidator;
+use Olein\WordPressMonitor\Report\MonthlyReportFormatter;
+use Olein\WordPressMonitor\Report\MonthlyReportService;
 use Olein\WordPressMonitor\Scheduler\BatchScheduler;
 use Olein\WordPressMonitor\Scheduler\CheckLock;
 use Olein\WordPressMonitor\Scheduler\CheckRetention;
@@ -113,6 +122,7 @@ final class Plugin {
 			$notification_settings = new NotificationSettings();
 			$webhook_validator     = new WebhookUrlValidator();
 			$channel_settings      = new NotificationChannelSettings( new NotificationSecretEncryptor(), $webhook_validator );
+			$site_policy           = new SiteNotificationPolicy();
 			$webhook_client        = new WebhookClient( $webhook_validator );
 			$text_formatter        = new NotificationTextFormatter();
 			$email_notifier        = new EmailNotifier( $notification_settings );
@@ -122,9 +132,10 @@ final class Plugin {
 			$notifications         = new NotificationManager(
 				new NotificationRule( $channel_settings ),
 				new NotificationMessageFactory( $sites ),
-				array( $email_notifier, $slack_notifier, $discord_notifier, $chatwork_notifier )
+				array( $email_notifier, $slack_notifier, $discord_notifier, $chatwork_notifier ),
+				$site_policy
 			);
-			$notification_retry    = new NotificationDeliveryRetry( $events, $notifications );
+			$notification_retry    = new NotificationDeliveryRetry( $events, $notifications, null, $sites );
 			$recorder              = new CheckResultRecorder(
 				$wpdb,
 				$checks,
@@ -162,7 +173,9 @@ final class Plugin {
 					$statuses,
 					$sites,
 					$notifications,
-					new NotificationDigestSignature()
+					new NotificationDigestSignature(),
+					null,
+					$site_policy
 				),
 				$notification_retry
 			);
@@ -180,18 +193,24 @@ final class Plugin {
 				$url_validator
 			);
 
-			$overview = new StatusOverview( $sites, $statuses );
+			$overview      = new StatusOverview( $sites, $statuses );
+			$menu_settings = new MenuSettings();
 
 			( new Admin(
 				new DashboardPage( $overview, $heartbeat ),
 				new SitesPage( $overview, $service ),
 				new SiteDetailPage( $sites, $statuses, $checks, $events, $service ),
 				new AddSitePage( $service ),
+				new EditSitePage( $sites, $service ),
 				new NotificationSettingsPage(
 					$notification_settings,
 					$channel_settings,
 					new NotificationTestService( array( $slack_notifier, $discord_notifier, $chatwork_notifier ) )
-				)
+				),
+				new SiteNotificationSettingsPage( $sites, $site_policy ),
+				new MonthlyReportPage( $sites, new MonthlyReportService( $wpdb ), new MonthlyReportFormatter() ),
+				new MenuSettingsPage( $menu_settings ),
+				new AdminMenuSimplifier( $menu_settings )
 			) )->register_hooks();
 		} catch ( RuntimeException $exception ) {
 			add_action(

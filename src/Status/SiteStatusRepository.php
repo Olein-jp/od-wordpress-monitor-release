@@ -77,6 +77,13 @@ final class SiteStatusRepository {
 	}
 
 	/**
+	 * Remove only the cached current state; check and event history remain intact.
+	 */
+	public function delete_for_site( int $site_id ): bool {
+		return false !== $this->database->delete( $this->table, array( 'site_id' => $site_id ), array( '%d' ) );
+	}
+
+	/**
 	 * Return the current status rows for all sites.
 	 *
 	 * @return list<SiteStatus>

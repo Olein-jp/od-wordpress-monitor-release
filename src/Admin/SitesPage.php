@@ -99,7 +99,7 @@ final class SitesPage {
 	}
 
 	/**
-	 * @param array{total:int,healthy:int,warning:int,critical:int,unknown:int} $summary Summary counts.
+	 * @param array{total:int,healthy:int,warning:int,critical:int,unknown:int,paused:int} $summary Summary counts.
 	 */
 	private function render_filters( array $summary, string $active_filter ): void {
 		$filters = array(
@@ -108,6 +108,7 @@ final class SitesPage {
 			'warning'  => array( __( 'Attention', 'od-wordpress-monitor' ), $summary['warning'] ),
 			'healthy'  => array( __( 'Healthy', 'od-wordpress-monitor' ), $summary['healthy'] ),
 			'unknown'  => array( __( 'Unknown', 'od-wordpress-monitor' ), $summary['unknown'] ),
+			'paused'   => array( __( 'Paused', 'od-wordpress-monitor' ), $summary['paused'] ),
 		);
 		?>
 		<ul class="subsubsub" aria-label="<?php echo esc_attr__( 'Filter sites by status', 'od-wordpress-monitor' ); ?>">
@@ -115,7 +116,7 @@ final class SitesPage {
 				<li class="<?php echo esc_attr( $filter ); ?>">
 					<a href="<?php echo esc_url( $this->filter_url( $filter ) ); ?>"<?php echo $filter === $active_filter ? ' class="current" aria-current="page"' : ''; ?>>
 						<?php echo esc_html( $details[0] ); ?> <span class="count">(<?php echo esc_html( number_format_i18n( $details[1] ) ); ?>)</span>
-					</a><?php echo 'unknown' === $filter ? '' : ' |'; ?>
+					</a><?php echo 'paused' === $filter ? '' : ' |'; ?>
 				</li>
 			<?php endforeach; ?>
 		</ul>
@@ -128,6 +129,7 @@ final class SitesPage {
 			<td>
 				<strong><a href="<?php echo esc_url( $this->detail_url( $site ) ); ?>"><?php echo esc_html( $site->name() ); ?></a></strong>
 				<br><a href="<?php echo esc_url( $site->site_url() ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $site->site_url() ); ?></a>
+				<br><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . EditSitePage::SLUG . '&site_id=' . $site->id() ) ); ?>"><?php echo esc_html__( 'Edit', 'od-wordpress-monitor' ); ?></a>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="odm_test_connection">
 					<input type="hidden" name="site_id" value="<?php echo esc_attr( (string) $site->id() ); ?>">
@@ -136,11 +138,11 @@ final class SitesPage {
 				</form>
 			</td>
 			<td><strong><?php echo esc_html( StatusLabel::for_status( $overall ) ); ?></strong></td>
-			<td><?php echo esc_html( StatusLabel::for_status( null === $status ? 'unknown' : $status->http_status() ) ); ?></td>
-			<td><?php echo esc_html( StatusLabel::for_status( null === $status ? 'unknown' : $status->agent_status() ) ); ?></td>
-			<td><?php echo esc_html( StatusLabel::for_status( null === $status ? 'unknown' : $status->updates_status() ) ); ?></td>
-			<td><?php echo esc_html( StatusLabel::for_status( null === $status ? 'unknown' : $status->site_health_status() ) ); ?></td>
-			<td><?php echo esc_html( StatusLabel::for_status( null === $status ? 'unknown' : $status->ssl_status() ) ); ?></td>
+			<td><?php echo esc_html( StatusLabel::for_status( 'paused' === $overall ? 'paused' : ( null === $status ? 'unknown' : $status->http_status() ) ) ); ?></td>
+			<td><?php echo esc_html( StatusLabel::for_status( 'paused' === $overall ? 'paused' : ( null === $status ? 'unknown' : $status->agent_status() ) ) ); ?></td>
+			<td><?php echo esc_html( StatusLabel::for_status( 'paused' === $overall ? 'paused' : ( null === $status ? 'unknown' : $status->updates_status() ) ) ); ?></td>
+			<td><?php echo esc_html( StatusLabel::for_status( 'paused' === $overall ? 'paused' : ( null === $status ? 'unknown' : $status->site_health_status() ) ) ); ?></td>
+			<td><?php echo esc_html( StatusLabel::for_status( 'paused' === $overall ? 'paused' : ( null === $status ? 'unknown' : $status->ssl_status() ) ) ); ?></td>
 			<td><?php $this->render_date( null === $status ? null : $status->last_checked_at() ); ?></td>
 		</tr>
 		<?php

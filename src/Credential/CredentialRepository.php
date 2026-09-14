@@ -61,4 +61,18 @@ final class CredentialRepository {
 			'encrypted_password' => (string) $row['encrypted_password'],
 		);
 	}
+
+	public function update( int $site_id, string $username, string $encrypted_password ): bool {
+		return 1 === $this->database->update(
+			$this->table,
+			array(
+				'username'           => $username,
+				'encrypted_password' => $encrypted_password,
+				'updated_at'         => current_time( 'mysql', true ),
+			),
+			array( 'site_id' => $site_id ),
+			array( '%s', '%s', '%s' ),
+			array( '%d' )
+		);
+	}
 }

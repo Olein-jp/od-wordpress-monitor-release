@@ -164,7 +164,11 @@ final class CheckRunner {
 	private function current_site( Site $selected ): ?Site {
 		$current = $this->sites->find( (int) $selected->id() );
 
-		return null !== $current && $current->enabled() && hash_equals( $selected->uuid(), $current->uuid() ) ? $current : null;
+		return null !== $current
+			&& $current->enabled()
+			&& hash_equals( $selected->uuid(), $current->uuid() )
+			&& $selected->site_url() === $current->site_url()
+			? $current : null;
 	}
 
 	private function advance_batch( string $check_type, ?string $generation, int $site_id ): void {
@@ -211,6 +215,10 @@ final class CheckRunner {
 				$result = $this->failed_result( $site, $check_type );
 			}
 
+			if ( null === $this->current_site( $site ) ) {
+				return null;
+			}
+
 			if ( null !== $this->retries && $this->retries->schedule_next( $site, $result, $attempt ) ) {
 				return null;
 			}
@@ -225,6 +233,9 @@ final class CheckRunner {
 	}
 
 	private function publish( CheckResult $result, Site $site ): void {
+		if ( null === $this->current_site( $site ) ) {
+			return;
+		}
 		if ( null !== $this->recorder ) {
 			$recorded = $this->recorder->record( $result );
 

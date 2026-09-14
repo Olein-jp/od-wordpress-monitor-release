@@ -29,7 +29,8 @@ final class NotificationRule {
 
 		if (
 			Status::CRITICAL === $current
-			&& in_array( $previous, array( Status::HEALTHY, Status::WARNING ), true )
+			&& ( in_array( $previous, array( Status::HEALTHY, Status::WARNING ), true )
+				|| ( Status::UNKNOWN === $previous && true === ( $event->metadata()['resumed_check'] ?? false ) ) )
 		) {
 			return self::OUTAGE;
 		}

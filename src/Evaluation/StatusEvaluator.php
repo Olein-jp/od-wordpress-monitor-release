@@ -64,7 +64,19 @@ final class StatusEvaluator {
 				throw new InvalidArgumentException( 'The check type cannot be applied to site status.' );
 		}
 
-		$metadata        = $previous->metadata();
+		$metadata = $previous->metadata();
+		$pending  = isset( $metadata['resume_pending'] ) && is_array( $metadata['resume_pending'] ) ? $metadata['resume_pending'] : array();
+		if ( Status::UNKNOWN !== $result->status() ) {
+			unset( $pending[ $result->type() ] );
+			if ( in_array( $result->type(), array( 'agent_ping', 'agent_status' ), true ) ) {
+				unset( $pending['agent_ping'], $pending['agent_status'] );
+			}
+		}
+		if ( array() === $pending ) {
+			unset( $metadata['resume_pending'] );
+		} else {
+			$metadata['resume_pending'] = $pending;
+		}
 		$result_metadata = $this->check_metadata->for_status( $result );
 
 		if (

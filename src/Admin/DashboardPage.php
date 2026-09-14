@@ -49,6 +49,11 @@ final class DashboardPage {
 				'count'  => $summary['unknown'],
 				'filter' => 'unknown',
 			),
+			array(
+				'label'  => __( 'Paused', 'od-wordpress-monitor' ),
+				'count'  => $summary['paused'],
+				'filter' => 'paused',
+			),
 		);
 		?>
 		<div class="wrap">

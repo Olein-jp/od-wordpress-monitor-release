@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OD WordPress Monitor 1.0.11\n"
+"Project-Id-Version: OD WordPress Monitor 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/monitor\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-12T23:21:21+00:00\n"
+"POT-Creation-Date: 2026-09-14T04:46:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: od-wordpress-monitor\n"
@@ -68,14 +68,16 @@ msgstr ""
 
 #: src/Admin/AddSitePage.php:18
 #: src/Admin/AddSitePage.php:53
+#: src/Admin/EditSitePage.php:25
+#: src/Admin/EditSitePage.php:76
 #: src/Admin/SitesPage.php:26
 #: src/Admin/SitesPage.php:79
 msgid "You are not allowed to manage monitored sites."
 msgstr ""
 
 #: src/Admin/AddSitePage.php:22
-#: src/Admin/Admin.php:67
-#: src/Admin/Admin.php:68
+#: src/Admin/Admin.php:85
+#: src/Admin/Admin.php:86
 #: src/Admin/SitesPage.php:38
 msgid "Add Site"
 msgstr ""
@@ -85,18 +87,22 @@ msgid "Connect to a WordPress site running OD Monitor Agent."
 msgstr ""
 
 #: src/Admin/AddSitePage.php:29
+#: src/Admin/EditSitePage.php:50
 msgid "Site Name"
 msgstr ""
 
 #: src/Admin/AddSitePage.php:33
+#: src/Admin/EditSitePage.php:52
 msgid "Site URL"
 msgstr ""
 
 #: src/Admin/AddSitePage.php:37
+#: src/Admin/EditSitePage.php:57
 msgid "Agent Username"
 msgstr ""
 
 #: src/Admin/AddSitePage.php:41
+#: src/Admin/EditSitePage.php:58
 msgid "Application Password"
 msgstr ""
 
@@ -110,38 +116,70 @@ msgstr ""
 msgid "Connected successfully. Site: %1$s — WordPress: %2$s — PHP: %3$s — Agent: %4$s"
 msgstr ""
 
-#: src/Admin/Admin.php:30
-#: src/Admin/Admin.php:31
+#: src/Admin/Admin.php:48
+#: src/Admin/Admin.php:49
 msgid "WordPress Monitor"
 msgstr ""
 
-#: src/Admin/Admin.php:40
-#: src/Admin/Admin.php:41
-#: src/Admin/DashboardPage.php:55
+#: src/Admin/Admin.php:58
+#: src/Admin/Admin.php:59
+#: src/Admin/DashboardPage.php:60
 msgid "Dashboard"
 msgstr ""
 
-#: src/Admin/Admin.php:49
-#: src/Admin/Admin.php:50
+#: src/Admin/Admin.php:67
+#: src/Admin/Admin.php:68
 #: src/Admin/DashboardPage.php:28
 #: src/Admin/SitesPage.php:37
 msgid "Sites"
 msgstr ""
 
-#: src/Admin/Admin.php:58
-#: src/Admin/Admin.php:59
-#: src/Admin/SiteDetailPage.php:287
+#: src/Admin/Admin.php:76
+#: src/Admin/Admin.php:77
+#: src/Admin/SiteDetailPage.php:293
 msgid "Site Details"
 msgstr ""
 
-#: src/Admin/Admin.php:76
+#: src/Admin/Admin.php:94
 #: src/Admin/NotificationSettingsPage.php:55
 msgid "Notification Settings"
 msgstr ""
 
-#: src/Admin/Admin.php:77
+#: src/Admin/Admin.php:95
 #: src/Admin/NotificationSettingsPage.php:39
 msgid "Notifications"
+msgstr ""
+
+#: src/Admin/Admin.php:103
+#: src/Admin/Admin.php:104
+#: src/Admin/EditSitePage.php:38
+#: src/Admin/SiteDetailPage.php:62
+msgid "Edit Site"
+msgstr ""
+
+#: src/Admin/Admin.php:112
+#: src/Admin/Admin.php:113
+#: src/Admin/SiteNotificationSettingsPage.php:42
+msgid "Site Notification Settings"
+msgstr ""
+
+#: src/Admin/Admin.php:122
+#: src/Admin/MenuSettingsPage.php:28
+msgid "Admin Menu Settings"
+msgstr ""
+
+#: src/Admin/Admin.php:123
+msgid "Menu Settings"
+msgstr ""
+
+#: src/Admin/Admin.php:132
+#: src/Admin/MonthlyReportPage.php:42
+#: src/Admin/SiteDetailPage.php:63
+msgid "Monthly Monitoring Report"
+msgstr ""
+
+#: src/Admin/Admin.php:133
+msgid "Reports"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:21
@@ -149,148 +187,223 @@ msgid "You are not allowed to view the monitoring dashboard."
 msgstr ""
 
 #: src/Admin/DashboardPage.php:33
-#: src/Admin/DashboardPage.php:138
+#: src/Admin/DashboardPage.php:143
 #: src/Admin/SitesPage.php:109
-#: src/Admin/StatusLabel.php:26
+#: src/Admin/StatusLabel.php:29
 msgid "Healthy"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:38
 #: src/Admin/SitesPage.php:108
-#: src/Admin/StatusLabel.php:28
+#: src/Admin/StatusLabel.php:31
 msgid "Attention"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:43
 #: src/Admin/SitesPage.php:107
-#: src/Admin/StatusLabel.php:30
+#: src/Admin/StatusLabel.php:33
 msgid "Problem"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:48
-#: src/Admin/SiteDetailPage.php:178
-#: src/Admin/SiteDetailPage.php:259
-#: src/Admin/SiteDetailPage.php:404
+#: src/Admin/SiteDetailPage.php:184
+#: src/Admin/SiteDetailPage.php:265
+#: src/Admin/SiteDetailPage.php:410
 #: src/Admin/SitesPage.php:110
-#: src/Admin/StatusLabel.php:32
+#: src/Admin/StatusLabel.php:35
 msgid "Unknown"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:56
+#: src/Admin/DashboardPage.php:53
+#: src/Admin/SitesPage.php:111
+#: src/Admin/StatusLabel.php:25
+msgid "Paused"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:61
 msgid "Current status of all monitored sites."
 msgstr ""
 
-#: src/Admin/DashboardPage.php:58
+#: src/Admin/DashboardPage.php:63
 msgid "Monitoring status summary"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:80
+#: src/Admin/DashboardPage.php:85
 msgid "Scheduler Health"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:81
+#: src/Admin/DashboardPage.php:86
 msgid "A stale job has missed at least two expected execution intervals or is no longer scheduled."
 msgstr ""
 
-#: src/Admin/DashboardPage.php:83
+#: src/Admin/DashboardPage.php:88
 msgid "Scheduler job health and latest execution"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:86
+#: src/Admin/DashboardPage.php:91
 msgid "Job"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:87
+#: src/Admin/DashboardPage.php:92
 msgid "Health"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:88
+#: src/Admin/DashboardPage.php:93
 msgid "Last started"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:89
+#: src/Admin/DashboardPage.php:94
 msgid "Last completed"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:90
+#: src/Admin/DashboardPage.php:95
 msgid "Last result"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:91
+#: src/Admin/DashboardPage.php:96
 msgid "Processed"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:92
+#: src/Admin/DashboardPage.php:97
 msgid "Next run"
-msgstr ""
-
-#: src/Admin/DashboardPage.php:125
-#: src/Admin/SiteDetailPage.php:298
-#: src/Admin/SiteDetailPage.php:470
-#: src/Admin/SitesPage.php:47
-msgid "HTTP"
-msgstr ""
-
-#: src/Admin/DashboardPage.php:126
-#: src/Admin/SiteDetailPage.php:471
-msgid "Agent ping"
-msgstr ""
-
-#: src/Admin/DashboardPage.php:127
-#: src/Admin/SiteDetailPage.php:472
-msgid "Agent status"
-msgstr ""
-
-#: src/Admin/DashboardPage.php:128
-#: src/Admin/SiteDetailPage.php:302
-#: src/Admin/SiteDetailPage.php:459
-#: src/Admin/SiteDetailPage.php:473
-#: src/Admin/SitesPage.php:49
-#: src/Notification/DailyDigest.php:119
-msgid "Updates"
-msgstr ""
-
-#: src/Admin/DashboardPage.php:129
-#: src/Admin/SiteDetailPage.php:303
-#: src/Admin/SiteDetailPage.php:474
-#: src/Admin/SitesPage.php:50
-msgid "Site Health"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:130
 #: src/Admin/SiteDetailPage.php:304
-#: src/Admin/SiteDetailPage.php:463
-#: src/Admin/SiteDetailPage.php:475
-#: src/Admin/SitesPage.php:51
-msgid "SSL"
+#: src/Admin/SiteDetailPage.php:476
+#: src/Admin/SitesPage.php:47
+#: src/Report/MonthlyReportFormatter.php:63
+msgid "HTTP"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:131
-msgid "Check history cleanup"
+#: src/Admin/SiteDetailPage.php:477
+#: src/Report/MonthlyReportFormatter.php:64
+msgid "Agent ping"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:132
+#: src/Admin/SiteDetailPage.php:478
+#: src/Report/MonthlyReportFormatter.php:65
+msgid "Agent status"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:133
+#: src/Admin/SiteDetailPage.php:308
+#: src/Admin/SiteDetailPage.php:465
+#: src/Admin/SiteDetailPage.php:479
+#: src/Admin/SitesPage.php:49
+#: src/Notification/DailyDigest.php:140
+#: src/Report/MonthlyReportFormatter.php:66
+#: src/Report/MonthlyReportFormatter.php:78
+msgid "Updates"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:134
+#: src/Admin/MenuSettingsPage.php:39
+#: src/Admin/SiteDetailPage.php:309
+#: src/Admin/SiteDetailPage.php:480
+#: src/Admin/SitesPage.php:50
+#: src/Report/MonthlyReportFormatter.php:67
+msgid "Site Health"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:135
+#: src/Admin/SiteDetailPage.php:310
+#: src/Admin/SiteDetailPage.php:469
+#: src/Admin/SiteDetailPage.php:481
+#: src/Admin/SitesPage.php:51
+#: src/Report/MonthlyReportFormatter.php:68
+#: src/Report/MonthlyReportFormatter.php:82
+msgid "SSL"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:136
+msgid "Check history cleanup"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:137
 msgid "Unknown job"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:139
+#: src/Admin/DashboardPage.php:144
 msgid "Stale"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:144
+#: src/Admin/DashboardPage.php:149
 msgid "Running"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:145
+#: src/Admin/DashboardPage.php:150
 msgid "Succeeded"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:146
+#: src/Admin/DashboardPage.php:151
 msgid "Failed"
 msgstr ""
 
-#: src/Admin/DashboardPage.php:147
+#: src/Admin/DashboardPage.php:152
 msgid "Not run"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:31
+#: src/Admin/ErrorMessages.php:24
+#: src/Site/SiteService.php:44
+#: src/Site/SiteService.php:123
+#: src/Site/SiteService.php:229
+msgid "The monitored site was not found."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:42
+msgid "Back to Site Details"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:43
+msgid "Monitoring is active."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:43
+msgid "Monitoring is paused. Existing history is retained."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:54
+msgid "Agent Credential"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:55
+msgid "Replace the stored Application Password"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:56
+msgid "Leave both fields blank to keep the existing credential. To replace it, check the box and enter both fields."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:61
+msgid "Save Site"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:68
+msgid "Pause Monitoring"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:68
+msgid "Resume Monitoring"
+msgstr ""
+
+#: src/Admin/EditSitePage.php:105
+msgid "Check the replacement box and enter both credential fields, or leave both fields blank."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:108
+msgid "Monitoring paused."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:109
+msgid "Monitoring resumed. Current status will update after the next check."
+msgstr ""
+
+#: src/Admin/EditSitePage.php:109
+msgid "Site saved."
 msgstr ""
 
 #: src/Admin/ErrorMessages.php:15
@@ -329,8 +442,126 @@ msgstr ""
 msgid "The Agent API version is not supported."
 msgstr ""
 
-#: src/Admin/ErrorMessages.php:24
+#: src/Admin/ErrorMessages.php:25
+#: src/Site/SiteService.php:49
+msgid "A site name is required."
+msgstr ""
+
+#: src/Admin/ErrorMessages.php:26
+#: src/Site/SiteService.php:73
+msgid "Both credential fields are required."
+msgstr ""
+
+#: src/Admin/ErrorMessages.php:27
+#: src/Site/SiteRepository.php:42
+#: src/Site/SiteService.php:159
+msgid "The site could not be saved."
+msgstr ""
+
+#: src/Admin/ErrorMessages.php:28
+#: src/Credential/CredentialService.php:62
+msgid "No credential is stored for this site."
+msgstr ""
+
+#: src/Admin/ErrorMessages.php:29
+#: src/Credential/CredentialService.php:71
+msgid "The stored credential could not be decrypted."
+msgstr ""
+
+#: src/Admin/ErrorMessages.php:30
+#: src/Credential/CredentialService.php:30
+#: src/Credential/CredentialService.php:45
+msgid "The credential could not be encrypted."
+msgstr ""
+
+#: src/Admin/ErrorMessages.php:31
 msgid "Could not connect to the Agent."
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:18
+msgid "Admin menu display"
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:19
+msgid "Simplify admin menu"
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:24
+msgid "You are not allowed to manage menu settings."
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:35
+msgid "Hidden menu items remain accessible by direct URL if your account has permission. Turn this setting off to restore the full menu."
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:37
+msgid "General Settings"
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:46
+msgid "The default keeps every WordPress menu visible. Simplification affects only the menu display for administrators on this site."
+msgstr ""
+
+#: src/Admin/MenuSettingsPage.php:54
+msgid "Show only Dashboard, Plugins, and WordPress Monitor menus"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:28
+msgid "You are not allowed to view monthly reports."
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:43
+msgid "Reports summarize stored history only. Missing checks are unknown, never counted as uptime. Check history is retained for 90 days."
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:46
+#: src/Admin/SiteNotificationSettingsPage.php:53
+#: src/Admin/SitesPage.php:45
+#: src/Report/MonthlyReportFormatter.php:20
+msgid "Site"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:52
+#: src/Report/MonthlyReportFormatter.php:21
+msgid "Month"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:54
+msgid "Show Report"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:57
+#: src/Admin/MonthlyReportPage.php:70
+#: src/Admin/MonthlyReportPage.php:110
+#: src/Admin/MonthlyReportPage.php:115
+#: src/Admin/MonthlyReportPage.php:121
+msgid "Select a valid site and month."
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:80
+msgid "Download CSV"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:84
+msgid "Section"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:85
+#: src/Admin/SiteDetailPage.php:124
+#: src/Admin/SiteDetailPage.php:318
+msgid "Item"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:86
+msgid "Status / Detail"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:87
+msgid "Count"
+msgstr ""
+
+#: src/Admin/MonthlyReportPage.php:104
+msgid "You are not allowed to export monthly reports."
 msgstr ""
 
 #: src/Admin/NotificationSettingsPage.php:32
@@ -338,6 +569,7 @@ msgid "Notification rules"
 msgstr ""
 
 #: src/Admin/NotificationSettingsPage.php:33
+#: src/Admin/SiteNotificationSettingsPage.php:37
 msgid "SSL expiration warning"
 msgstr ""
 
@@ -370,118 +602,124 @@ msgid "Discord notifications"
 msgstr ""
 
 #: src/Admin/NotificationSettingsPage.php:51
+#: src/Admin/SiteNotificationSettingsPage.php:24
+#: src/Admin/SiteNotificationSettingsPage.php:84
 msgid "You are not allowed to manage notification settings."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:70
+#: src/Admin/NotificationSettingsPage.php:56
+msgid "Configure notifications by site"
+msgstr ""
+
+#: src/Admin/NotificationSettingsPage.php:71
 msgid "You are not allowed to test notification settings."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:75
+#: src/Admin/NotificationSettingsPage.php:76
 msgid "The notification channel is invalid."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:102
+#: src/Admin/NotificationSettingsPage.php:103
 msgid "Configure the global recipient for monitoring outage and recovery notifications."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:106
+#: src/Admin/NotificationSettingsPage.php:107
 msgid "These rules apply globally to every enabled notification channel. Daily digests include only newly detected or changed warning details; unchanged warnings are not repeated."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:110
+#: src/Admin/NotificationSettingsPage.php:111
 msgid "Notify once when a healthy SSL certificate enters the warning period."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:114
+#: src/Admin/NotificationSettingsPage.php:115
 msgid "Include newly detected or changed available updates in the daily digest."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:118
+#: src/Admin/NotificationSettingsPage.php:119
 msgid "Include newly detected or changed Site Health recommendations in the daily digest."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:124
+#: src/Admin/NotificationSettingsPage.php:125
 msgid "Daily digest hour"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:130
+#: src/Admin/NotificationSettingsPage.php:131
 msgid "Uses the timezone configured in WordPress. WP-Cron sends the digest on the first run during the selected hour."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:138
+#: src/Admin/NotificationSettingsPage.php:139
 msgid "Enable email notifications"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:146
+#: src/Admin/NotificationSettingsPage.php:147
 msgid "Notifications remain suppressed until a valid email address is saved."
 msgstr ""
 
 #. translators: %s: service name.
-#: src/Admin/NotificationSettingsPage.php:167
+#: src/Admin/NotificationSettingsPage.php:168
 #, php-format
 msgid "Enable %s notifications"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:170
+#: src/Admin/NotificationSettingsPage.php:171
 msgid "Webhook URL"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:173
+#: src/Admin/NotificationSettingsPage.php:174
 msgid "Configured. Leave blank to keep the saved webhook."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:173
+#: src/Admin/NotificationSettingsPage.php:174
 msgid "Not configured."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:175
+#: src/Admin/NotificationSettingsPage.php:176
 msgid "Delete the saved webhook"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:191
+#: src/Admin/NotificationSettingsPage.php:192
 msgid "Chatwork settings"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:194
+#: src/Admin/NotificationSettingsPage.php:195
 msgid "Enable Chatwork notifications"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:197
+#: src/Admin/NotificationSettingsPage.php:198
 msgid "Room ID"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:201
+#: src/Admin/NotificationSettingsPage.php:202
 msgid "API token"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:204
+#: src/Admin/NotificationSettingsPage.php:205
 msgid "Configured. Leave blank to keep the saved API token."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:204
+#: src/Admin/NotificationSettingsPage.php:205
 msgid "API token is not configured."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:206
+#: src/Admin/NotificationSettingsPage.php:207
 msgid "Delete the saved API token"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:229
+#: src/Admin/NotificationSettingsPage.php:230
 msgid "Chatwork notifications"
 msgstr ""
 
 #. translators: %s: service name.
-#: src/Admin/NotificationSettingsPage.php:248
+#: src/Admin/NotificationSettingsPage.php:249
 #, php-format
 msgid "Send %s test notification"
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:270
+#: src/Admin/NotificationSettingsPage.php:271
 msgid "The test notification was sent."
 msgstr ""
 
-#: src/Admin/NotificationSettingsPage.php:271
+#: src/Admin/NotificationSettingsPage.php:272
 msgid "The test notification could not be sent. Check the saved notification settings and try again."
 msgstr ""
 
@@ -490,298 +728,359 @@ msgid "You are not allowed to view monitored site details."
 msgstr ""
 
 #: src/Admin/SiteDetailPage.php:61
-#: src/Admin/SiteDetailPage.php:289
+#: src/Admin/SiteDetailPage.php:295
 msgid "Back to Sites"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:63
-msgid "Current Status"
-msgstr ""
-
-#: src/Admin/SiteDetailPage.php:66
-msgid "Agent Site Health Snapshot"
+#: src/Admin/SiteDetailPage.php:67
+msgid "Monitoring is paused. The recent checks and events below are historical."
 msgstr ""
 
 #: src/Admin/SiteDetailPage.php:69
-msgid "Site Software"
+msgid "Current Status"
 msgstr ""
 
 #: src/Admin/SiteDetailPage.php:72
-msgid "Recent Events"
+msgid "Agent Site Health Snapshot"
 msgstr ""
 
 #: src/Admin/SiteDetailPage.php:75
+msgid "Site Software"
+msgstr ""
+
+#: src/Admin/SiteDetailPage.php:78
+msgid "Recent Events"
+msgstr ""
+
+#: src/Admin/SiteDetailPage.php:81
 msgid "Recent Checks"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:85
+#: src/Admin/SiteDetailPage.php:91
 msgid "This snapshot contains only the safe synchronous Site Health tests run by the Agent. The included tests and collection time differ from the complete WordPress Site Health screen, so the totals may not match."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:88
+#: src/Admin/SiteDetailPage.php:94
 msgid "An Agent Site Health snapshot has not yet been collected."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:97
+#: src/Admin/SiteDetailPage.php:103
 msgid "Agent collected at:"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:100
+#: src/Admin/SiteDetailPage.php:106
 msgid "Monitor checked at:"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:106
+#: src/Admin/SiteDetailPage.php:112
 msgid "Agent critical results"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:107
+#: src/Admin/SiteDetailPage.php:113
 msgid "Agent recommended results"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:108
+#: src/Admin/SiteDetailPage.php:114
 msgid "Agent good results"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:112
+#: src/Admin/SiteDetailPage.php:118
 msgid "Legacy representative test ID"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:116
+#: src/Admin/SiteDetailPage.php:122
 msgid "Latest Agent Site Health snapshot summary"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:118
-#: src/Admin/SiteDetailPage.php:312
-msgid "Item"
-msgstr ""
-
-#: src/Admin/SiteDetailPage.php:119
+#: src/Admin/SiteDetailPage.php:125
 msgid "Value"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:132
+#: src/Admin/SiteDetailPage.php:138
 msgid "The full issue list is unavailable for this snapshot because it was collected by an earlier Monitor version."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:137
+#: src/Admin/SiteDetailPage.php:143
 msgid "The Agent found no critical or recommended results in this snapshot."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:141
+#: src/Admin/SiteDetailPage.php:147
 msgid "Detected issues"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:143
+#: src/Admin/SiteDetailPage.php:149
 msgid "Critical and recommended results detected by the Agent"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:145
-#: src/Admin/SiteDetailPage.php:381
+#: src/Admin/SiteDetailPage.php:151
+#: src/Admin/SiteDetailPage.php:387
 msgid "Status"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:146
+#: src/Admin/SiteDetailPage.php:152
 msgid "Finding"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:147
+#: src/Admin/SiteDetailPage.php:153
 msgid "Test ID"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:176
+#: src/Admin/SiteDetailPage.php:182
 msgid "Critical"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:177
+#: src/Admin/SiteDetailPage.php:183
 msgid "Recommended"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:188
+#: src/Admin/SiteDetailPage.php:194
 msgid "Software information has not yet been collected."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:197
+#: src/Admin/SiteDetailPage.php:203
 msgid "Last collected:"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:201
+#: src/Admin/SiteDetailPage.php:207
 msgid "Active theme and plugins with update availability"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:203
+#: src/Admin/SiteDetailPage.php:209
 msgid "Type"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:204
+#: src/Admin/SiteDetailPage.php:210
 msgid "Name"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:205
+#: src/Admin/SiteDetailPage.php:211
 msgid "Current version"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:206
+#: src/Admin/SiteDetailPage.php:212
 msgid "Update status"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:207
+#: src/Admin/SiteDetailPage.php:213
 msgid "Available version"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:212
+#: src/Admin/SiteDetailPage.php:218
 msgid "Theme"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:226
+#: src/Admin/SiteDetailPage.php:232
 msgid "Plugin"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:236
+#: src/Admin/SiteDetailPage.php:242
 msgid "Only the first 100 active plugins are shown."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:271
+#: src/Admin/SiteDetailPage.php:277
 msgid "Update available"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:271
+#: src/Admin/SiteDetailPage.php:277
 msgid "Latest"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:288
+#: src/Admin/SiteDetailPage.php:294
 msgid "The monitored site could not be found."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:297
+#: src/Admin/SiteDetailPage.php:303
 #: src/Admin/SitesPage.php:46
 msgid "Overall"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:299
-#: src/Admin/SiteDetailPage.php:458
+#: src/Admin/SiteDetailPage.php:305
+#: src/Admin/SiteDetailPage.php:464
 #: src/Admin/SitesPage.php:48
+#: src/Report/MonthlyReportFormatter.php:77
 msgid "Agent"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:300
+#: src/Admin/SiteDetailPage.php:306
 msgid "WordPress"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:301
+#: src/Admin/SiteDetailPage.php:307
 msgid "PHP"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:305
+#: src/Admin/SiteDetailPage.php:311
 msgid "Last checked"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:309
+#: src/Admin/SiteDetailPage.php:315
 msgid "Current monitoring status and check times"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:313
+#: src/Admin/SiteDetailPage.php:319
 msgid "Status or version"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:314
-#: src/Admin/SiteDetailPage.php:379
+#: src/Admin/SiteDetailPage.php:320
+#: src/Admin/SiteDetailPage.php:385
 msgid "Checked at"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:334
+#: src/Admin/SiteDetailPage.php:340
 msgid "Recent Events is a history of state changes and may include problems that are no longer active."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:337
+#: src/Admin/SiteDetailPage.php:343
 msgid "No events have been recorded."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:342
+#: src/Admin/SiteDetailPage.php:348
 msgid "Recent monitoring events, newest first"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:344
+#: src/Admin/SiteDetailPage.php:350
 msgid "Occurred at"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:345
+#: src/Admin/SiteDetailPage.php:351
 msgid "Event"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:346
+#: src/Admin/SiteDetailPage.php:352
 msgid "Previous"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:347
+#: src/Admin/SiteDetailPage.php:353
 msgid "Current"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:348
-#: src/Admin/SiteDetailPage.php:383
+#: src/Admin/SiteDetailPage.php:354
+#: src/Admin/SiteDetailPage.php:389
 msgid "Error"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:349
-#: src/Admin/SiteDetailPage.php:384
+#: src/Admin/SiteDetailPage.php:355
+#: src/Admin/SiteDetailPage.php:390
 msgid "Message"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:372
+#: src/Admin/SiteDetailPage.php:378
 msgid "No checks have been recorded."
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:377
+#: src/Admin/SiteDetailPage.php:383
 msgid "Recent monitoring checks, newest first"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:380
+#: src/Admin/SiteDetailPage.php:386
 msgid "Check"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:382
+#: src/Admin/SiteDetailPage.php:388
 msgid "Duration"
 msgstr ""
 
 #. translators: %d: request duration in milliseconds.
-#: src/Admin/SiteDetailPage.php:392
+#: src/Admin/SiteDetailPage.php:398
 #, php-format
 msgid "%d ms"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:456
+#: src/Admin/SiteDetailPage.php:462
+#: src/Report/MonthlyReportFormatter.php:75
 msgid "Site down"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:457
+#: src/Admin/SiteDetailPage.php:463
+#: src/Report/MonthlyReportFormatter.php:76
 msgid "Recovered"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:460
+#: src/Admin/SiteDetailPage.php:466
+#: src/Report/MonthlyReportFormatter.php:79
 msgid "Site Health problem"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:461
+#: src/Admin/SiteDetailPage.php:467
+#: src/Report/MonthlyReportFormatter.php:80
 msgid "Site Health partially recovered"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:462
+#: src/Admin/SiteDetailPage.php:468
+#: src/Report/MonthlyReportFormatter.php:81
 msgid "Site Health recovered"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:464
+#: src/Admin/SiteDetailPage.php:470
+#: src/Report/MonthlyReportFormatter.php:83
 msgid "Unknown event"
 msgstr ""
 
-#: src/Admin/SiteDetailPage.php:476
+#: src/Admin/SiteDetailPage.php:482
+#: src/Report/MonthlyReportFormatter.php:69
 msgid "Unknown check"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:35
+#: src/Notification/EmailNotifier.php:35
+#: src/Notification/NotificationTextFormatter.php:15
+msgid "Outage"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:36
+#: src/Notification/EmailNotifier.php:37
+#: src/Notification/NotificationTextFormatter.php:17
+msgid "Recovery"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:38
+#: src/Notification/EmailNotifier.php:41
+#: src/Notification/NotificationTextFormatter.php:21
+msgid "Daily digest"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:43
+msgid "Site settings can restrict global notification rules and configured channels, but cannot enable a globally disabled rule or channel."
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:44
+msgid "Back to Notification Settings"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:46
+msgid "Site notification settings saved."
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:49
+msgid "Add a site before configuring site notifications."
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:59
+msgid "Select Site"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:65
+msgid "Inherit global settings"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:66
+msgid "Use site-specific restrictions"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:67
+msgid "Notification types"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:71
+msgid "Delivery channels"
+msgstr ""
+
+#: src/Admin/SiteNotificationSettingsPage.php:89
+msgid "The selected site is invalid."
 msgstr ""
 
 #: src/Admin/SitesPage.php:42
 msgid "Monitored sites and their current status"
-msgstr ""
-
-#: src/Admin/SitesPage.php:45
-msgid "Site"
 msgstr ""
 
 #: src/Admin/SitesPage.php:52
@@ -804,11 +1103,15 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: src/Admin/SitesPage.php:113
+#: src/Admin/SitesPage.php:114
 msgid "Filter sites by status"
 msgstr ""
 
-#: src/Admin/SitesPage.php:135
+#: src/Admin/SitesPage.php:132
+msgid "Edit"
+msgstr ""
+
+#: src/Admin/SitesPage.php:137
 msgid "Test Connection"
 msgstr ""
 
@@ -821,19 +1124,8 @@ msgid "Old check results could not be deleted."
 msgstr ""
 
 #: src/Credential/CredentialRepository.php:40
+#: src/Credential/CredentialService.php:50
 msgid "The credential could not be saved."
-msgstr ""
-
-#: src/Credential/CredentialService.php:30
-msgid "The credential could not be encrypted."
-msgstr ""
-
-#: src/Credential/CredentialService.php:45
-msgid "No credential is stored for this site."
-msgstr ""
-
-#: src/Credential/CredentialService.php:54
-msgid "The stored credential could not be decrypted."
 msgstr ""
 
 #: src/Evaluation/CheckResultRecorder.php:109
@@ -1081,38 +1373,23 @@ msgstr ""
 msgid "The update check failed."
 msgstr ""
 
-#: src/Notification/DailyDigest.php:90
+#: src/Notification/DailyDigest.php:107
 msgid "Monitoring summary"
 msgstr ""
 
-#: src/Notification/DailyDigest.php:119
+#: src/Notification/DailyDigest.php:140
 msgid "Site Health recommended"
 msgstr ""
 
 #. translators: 1: digest item type, 2: monitored site name.
-#: src/Notification/DailyDigest.php:120
+#: src/Notification/DailyDigest.php:141
 #, php-format
 msgid "%1$s: %2$s"
-msgstr ""
-
-#: src/Notification/EmailNotifier.php:35
-#: src/Notification/NotificationTextFormatter.php:15
-msgid "Outage"
-msgstr ""
-
-#: src/Notification/EmailNotifier.php:37
-#: src/Notification/NotificationTextFormatter.php:17
-msgid "Recovery"
 msgstr ""
 
 #: src/Notification/EmailNotifier.php:39
 #: src/Notification/NotificationTextFormatter.php:19
 msgid "SSL certificate expiry warning"
-msgstr ""
-
-#: src/Notification/EmailNotifier.php:41
-#: src/Notification/NotificationTextFormatter.php:21
-msgid "Daily digest"
 msgstr ""
 
 #. translators: 1: Notification type, 2: monitored site name.
@@ -1213,20 +1490,20 @@ msgstr ""
 msgid "Enter a valid webhook URL for this service."
 msgstr ""
 
-#: src/Plugin.php:201
+#: src/Plugin.php:220
 msgid "OD WordPress Monitor requires the sodium PHP extension to protect credentials."
 msgstr ""
 
-#: src/Plugin.php:249
+#: src/Plugin.php:268
 msgid "OD WordPress Monitor is temporarily paused while its database is being updated by another request."
 msgstr ""
 
-#: src/Plugin.php:251
+#: src/Plugin.php:270
 msgid "OD WordPress Monitor could not update its database. Monitoring is paused; reload this page to retry after checking database permissions and logs."
 msgstr ""
 
 #. translators: 1: previous database schema version, 2: target database schema version.
-#: src/Plugin.php:259
+#: src/Plugin.php:278
 #, php-format
 msgid "Schema version: %1$s → %2$s."
 msgstr ""
@@ -1239,7 +1516,62 @@ msgstr ""
 msgid "The Agent returned an unexpected response."
 msgstr ""
 
-#: src/Scheduler/CheckRunner.php:247
+#: src/Report/MonthlyReportFormatter.php:20
+#: src/Report/MonthlyReportFormatter.php:21
+#: src/Report/MonthlyReportFormatter.php:22
+#: src/Report/MonthlyReportFormatter.php:23
+#: src/Report/MonthlyReportFormatter.php:24
+#: src/Report/MonthlyReportFormatter.php:25
+msgid "Report"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:22
+msgid "From (site time)"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:23
+msgid "Until (exclusive, site time)"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:24
+msgid "Data coverage"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:25
+msgid "Interpretation"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:25
+msgid "Counts reflect stored checks only. Unchecked periods are unknown, not healthy; no uptime or SLA is calculated."
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:26
+#: src/Report/MonthlyReportFormatter.php:29
+msgid "Checks"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:26
+msgid "Total recorded checks"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:32
+#: src/Report/MonthlyReportFormatter.php:34
+msgid "Events"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:32
+msgid "Total recorded events"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:41
+msgid "Records span the full month (not uptime or SLA)"
+msgstr ""
+
+#: src/Report/MonthlyReportFormatter.php:42
+msgid "Insufficient data / partial month"
+msgstr ""
+
+#: src/Scheduler/CheckRunner.php:258
 msgid "The scheduled check could not be completed."
 msgstr ""
 
@@ -1259,16 +1591,8 @@ msgstr ""
 msgid "Check cleanup is unavailable."
 msgstr ""
 
-#: src/Site/SiteRepository.php:42
-msgid "The site could not be saved."
-msgstr ""
-
-#: src/Site/SiteService.php:41
+#: src/Site/SiteService.php:172
 msgid "All fields are required."
-msgstr ""
-
-#: src/Site/SiteService.php:98
-msgid "The monitored site was not found."
 msgstr ""
 
 #: src/Status/SiteStatusRepository.php:69

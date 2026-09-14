@@ -21,6 +21,13 @@ final class ErrorMessages {
 			ErrorCode::INVALID_JSON          => __( 'The Agent did not return a valid JSON response.', 'od-wordpress-monitor' ),
 			ErrorCode::INVALID_RESPONSE      => __( 'The Agent response format is invalid.', 'od-wordpress-monitor' ),
 			ErrorCode::UNSUPPORTED_SCHEMA    => __( 'The Agent API version is not supported.', 'od-wordpress-monitor' ),
+			'SITE_NOT_FOUND'                 => __( 'The monitored site was not found.', 'od-wordpress-monitor' ),
+			'SITE_NAME_REQUIRED'             => __( 'A site name is required.', 'od-wordpress-monitor' ),
+			'CREDENTIAL_INPUT_REQUIRED'      => __( 'Both credential fields are required.', 'od-wordpress-monitor' ),
+			'DATABASE_ERROR'                 => __( 'The site could not be saved.', 'od-wordpress-monitor' ),
+			ErrorCode::CREDENTIAL_NOT_FOUND  => __( 'No credential is stored for this site.', 'od-wordpress-monitor' ),
+			ErrorCode::CREDENTIAL_DECRYPTION_FAILED => __( 'The stored credential could not be decrypted.', 'od-wordpress-monitor' ),
+			ErrorCode::ENCRYPTION_FAILED     => __( 'The credential could not be encrypted.', 'od-wordpress-monitor' ),
 			default                          => __( 'Could not connect to the Agent.', 'od-wordpress-monitor' ),
 		};
 	}

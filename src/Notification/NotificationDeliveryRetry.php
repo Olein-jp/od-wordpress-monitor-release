@@ -10,6 +10,7 @@ namespace Olein\WordPressMonitor\Notification;
 use Closure;
 use DateTimeImmutable;
 use Olein\WordPressMonitor\Event\EventRepository;
+use Olein\WordPressMonitor\Site\SiteRepository;
 
 final class NotificationDeliveryRetry {
 	public const HOOK = 'odm_retry_notification_delivery';
@@ -23,7 +24,8 @@ final class NotificationDeliveryRetry {
 	public function __construct(
 		private readonly EventRepository $events,
 		private readonly NotificationManager $manager,
-		private readonly ?Closure $clock = null
+		private readonly ?Closure $clock = null,
+		private readonly ?SiteRepository $sites = null
 	) {
 	}
 
@@ -56,6 +58,9 @@ final class NotificationDeliveryRetry {
 		if ( null === $event || ! $this->is_pending( $event->metadata(), $channel_id ) ) {
 			return null;
 		}
+		if ( null !== $this->sites && ! $this->site_enabled( $event->site_id() ) ) {
+			return null;
+		}
 
 		$claim = 'odm_lock_notification_retry_' . $event_id . '_' . $channel_id;
 		if ( ! add_option( $claim, ( $this->now() + self::CLAIM_LIFETIME ) . ':claimed', '', false ) ) {
@@ -66,6 +71,9 @@ final class NotificationDeliveryRetry {
 		if ( null === $event || ! $this->is_pending( $event->metadata(), $channel_id ) ) {
 			return null;
 		}
+		if ( null !== $this->sites && ! $this->site_enabled( $event->site_id() ) ) {
+			return null;
+		}
 
 		$result = $this->manager->retry_channel( $event, $channel_id );
 		if ( null === $result ) {
@@ -74,6 +82,11 @@ final class NotificationDeliveryRetry {
 
 		$this->events->record_channel_retry_result( $event_id, $channel_id, $result, new DateTimeImmutable( '@' . $this->now() ) );
 		return $result;
+	}
+
+	private function site_enabled( int $site_id ): bool {
+		$site = $this->sites?->find( $site_id );
+		return null !== $site && $site->enabled();
 	}
 
 	public function is_retryable( NotificationChannelResult $result ): bool {

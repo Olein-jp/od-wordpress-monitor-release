@@ -26,7 +26,8 @@ final class DailyDigest {
 		private readonly SiteRepository $sites,
 		private readonly NotificationManager $notifications,
 		private readonly NotificationDigestSignature $signatures = new NotificationDigestSignature(),
-		?Closure $now = null
+		?Closure $now = null,
+		private readonly ?SiteNotificationPolicy $site_policy = null
 	) {
 		$this->now = $now ?? static fn(): DateTimeImmutable => current_datetime();
 	}
@@ -52,24 +53,35 @@ final class DailyDigest {
 			'site_health' => array(),
 		);
 		$lines           = array();
+		$channel_lines   = array();
 
 		foreach ( $this->statuses->bounded( self::MAX_SITES ) as $status ) {
 			$site = $this->sites->find( $status->site_id() );
-			if ( null === $site ) {
+			if ( null === $site || ! $site->enabled() ) {
+				continue;
+			}
+			if ( null !== $this->site_policy && ! $this->site_policy->allows_type( $status->site_id(), NotificationRule::DAILY_DIGEST ) ) {
 				continue;
 			}
 
-			$name     = sanitize_text_field( $site->name() );
-			$metadata = $status->metadata();
+			$name       = sanitize_text_field( $site->name() );
+			$metadata   = $status->metadata();
+			$site_lines = array();
 			if ( $this->settings->updates_digest_enabled() && Status::WARNING === $status->updates_status() ) {
 				$signature = $this->signatures->updates( isset( $metadata['updates'] ) && is_array( $metadata['updates'] ) ? $metadata['updates'] : array() );
-				$this->add_item( 'updates', $status->site_id(), $name, $signature, $state, $next_signatures, $lines );
+				$this->add_item( 'updates', $status->site_id(), $name, $signature, $state, $next_signatures, $site_lines );
 			}
 
 			if ( $this->settings->site_health_digest_enabled() && Status::WARNING === $status->site_health_status() ) {
 				$signature = $this->signatures->site_health( isset( $metadata['site_health'] ) && is_array( $metadata['site_health'] ) ? $metadata['site_health'] : array() );
-				$this->add_item( 'site_health', $status->site_id(), $name, $signature, $state, $next_signatures, $lines );
+				$this->add_item( 'site_health', $status->site_id(), $name, $signature, $state, $next_signatures, $site_lines );
 			}
+			foreach ( $this->notifications->channel_ids() as $channel_id ) {
+				if ( null === $this->site_policy || $this->site_policy->allows_channel( $status->site_id(), $channel_id ) ) {
+					$channel_lines[ $channel_id ] = array_merge( $channel_lines[ $channel_id ] ?? array(), $site_lines );
+				}
+			}
+			$lines = array_merge( $lines, $site_lines );
 		}
 
 		update_option(
@@ -85,19 +97,28 @@ final class DailyDigest {
 			return null;
 		}
 
-		$message = new NotificationMessage(
-			NotificationRule::DAILY_DIGEST,
-			__( 'Monitoring summary', 'od-wordpress-monitor' ),
-			home_url( '/' ),
-			'DAILY_DIGEST',
-			'—',
-			'—',
-			$now,
-			'—',
-			implode( "\n", $lines )
-		);
-
-		return $this->notifications->dispatch( $message );
+		$results = array();
+		foreach ( $channel_lines as $channel_id => $items ) {
+			if ( array() === $items ) {
+				continue;
+			}
+			$message = new NotificationMessage(
+				NotificationRule::DAILY_DIGEST,
+				__( 'Monitoring summary', 'od-wordpress-monitor' ),
+				home_url( '/' ),
+				'DAILY_DIGEST',
+				'—',
+				'—',
+				$now,
+				'—',
+				implode( "\n", $items )
+			);
+			$result  = $this->notifications->dispatch_channel( $message, $channel_id );
+			if ( null !== $result ) {
+				$results[] = $result;
+			}
+		}
+		return array() === $results ? null : new NotificationDeliveryResult( $results );
 	}
 
 	/**

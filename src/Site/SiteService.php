@@ -13,19 +13,150 @@ use Olein\WordPressMonitor\Http\AgentClient;
 use Olein\WordPressMonitor\Http\UrlValidator;
 use Olein\WordPressMonitor\Support\ErrorCode;
 use Olein\WordPressMonitor\Support\UUID;
+use Olein\WordPressMonitor\Status\SiteStatusRepository;
+use Olein\WordPressMonitor\Status\SiteStatus;
 use WP_Error;
 
 final class SiteService {
 	private readonly UrlValidator $url_validator;
+	private readonly SiteStatusRepository $statuses;
 
 	public function __construct(
 		private readonly SiteRepository $sites,
 		private readonly CredentialService $credentials,
 		private readonly AgentClient $agent,
 		private readonly UUID $uuid,
-		?UrlValidator $url_validator = null
+		?UrlValidator $url_validator = null,
+		?SiteStatusRepository $statuses = null
 	) {
 		$this->url_validator = $url_validator ?? new UrlValidator();
+		$this->statuses      = $statuses ?? new SiteStatusRepository( $GLOBALS['wpdb'] );
+	}
+
+	/**
+	 * Update a registered site after validating changed connection details.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function update( int $site_id, string $name, string $site_url, ?Credential $replacement = null ) {
+		$site = $this->sites->find( $site_id );
+		if ( null === $site ) {
+			return new WP_Error( 'SITE_NOT_FOUND', __( 'The monitored site was not found.', 'od-wordpress-monitor' ) );
+		}
+
+		$name = sanitize_text_field( $name );
+		if ( '' === $name ) {
+			return new WP_Error( 'SITE_NAME_REQUIRED', __( 'A site name is required.', 'od-wordpress-monitor' ) );
+		}
+
+		$normalized_url = $site->site_url() === trim( $site_url ) ? $site->site_url() : $this->normalize_url( $site_url );
+		if ( is_wp_error( $normalized_url ) ) {
+			return $normalized_url;
+		}
+
+		$connection_changed = $normalized_url !== $site->site_url() || null !== $replacement;
+		$updated            = new Site(
+			$site_id,
+			$site->uuid(),
+			$name,
+			$normalized_url,
+			trailingslashit( $normalized_url ) . 'wp-json/od-monitor-agent/v1',
+			$site->enabled()
+		);
+
+		if ( $connection_changed ) {
+			$credential = $replacement ?? $this->credentials->for_site( $site_id );
+			if ( is_wp_error( $credential ) ) {
+				return $credential;
+			}
+			if ( '' === $credential->username() || '' === $credential->password() ) {
+				return new WP_Error( 'CREDENTIAL_INPUT_REQUIRED', __( 'Both credential fields are required.', 'od-wordpress-monitor' ) );
+			}
+
+			$ping = $this->agent->ping( $updated, $credential );
+			if ( is_wp_error( $ping ) ) {
+				return $ping;
+			}
+			$status = $this->agent->status( $updated, $credential );
+			if ( is_wp_error( $status ) ) {
+				return $status;
+			}
+		}
+
+		global $wpdb;
+		if ( false === $wpdb->query( 'START TRANSACTION' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+
+		if ( ! $this->sites->update( $updated ) ) {
+			$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+		if ( null !== $replacement && true !== $this->credentials->replace( $site_id, $replacement ) ) {
+			$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+		if ( $connection_changed && ! $this->statuses->delete_for_site( $site_id ) ) {
+			$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+		if ( false === $wpdb->query( 'COMMIT' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+
+		if ( $connection_changed ) {
+			delete_transient( 'odm_status_' . $site->uuid() );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Pause or resume scheduled monitoring without deleting history.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function set_enabled( int $site_id, bool $enabled ) {
+		$site = $this->sites->find( $site_id );
+		if ( null === $site ) {
+			return new WP_Error( 'SITE_NOT_FOUND', __( 'The monitored site was not found.', 'od-wordpress-monitor' ) );
+		}
+		if ( $enabled === $site->enabled() ) {
+			return true;
+		}
+
+		global $wpdb;
+		if ( false === $wpdb->query( 'START TRANSACTION' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+
+		$updated = new Site( $site_id, $site->uuid(), $site->name(), $site->site_url(), $site->agent_url(), $enabled );
+		$reset   = $enabled
+			? $this->statuses->upsert(
+				new SiteStatus(
+					$site_id,
+					metadata: array(
+						'resume_pending' => array_fill_keys( array( 'http', 'agent_ping', 'agent_status', 'updates', 'site_health', 'ssl' ), true ),
+					)
+				)
+			)
+			: $this->statuses->delete_for_site( $site_id );
+		if ( ! $this->sites->update( $updated ) || true !== $reset ) {
+			$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+		if ( false === $wpdb->query( 'COMMIT' ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $this->database_error();
+		}
+
+		delete_transient( 'odm_status_' . $site->uuid() );
+		return true;
+	}
+
+	private function database_error(): WP_Error {
+		return new WP_Error( 'DATABASE_ERROR', __( 'The site could not be saved.', 'od-wordpress-monitor' ) );
 	}
 
 	/**

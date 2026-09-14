@@ -65,6 +65,10 @@ final class StateTransition {
 
 		$metadata               = $this->check_metadata->for_result( $result );
 		$metadata['check_type'] = $result->type();
+		$pending                = $previous->metadata()['resume_pending'] ?? null;
+		if ( Status::UNKNOWN === $previous_status && Status::CRITICAL === $current_status && is_array( $pending ) && true === ( $pending[ $result->type() ] ?? false ) ) {
+			$metadata['resumed_check'] = true;
+		}
 
 		return new MonitoringEvent(
 			null,

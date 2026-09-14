@@ -21,7 +21,8 @@ final class NotificationManager {
 	public function __construct(
 		private readonly NotificationRule $rule,
 		private readonly NotificationMessageFactoryInterface $messages,
-		array $senders
+		array $senders,
+		private readonly ?SiteNotificationPolicy $site_policy = null
 	) {
 		$indexed = array();
 
@@ -53,6 +54,9 @@ final class NotificationManager {
 		if ( null === $notification_type ) {
 			return null;
 		}
+		if ( null !== $this->site_policy && ! $this->site_policy->allows_type( $event->site_id(), $notification_type ) ) {
+			return null;
+		}
 
 		$message = $this->messages->create( $event, $notification_type );
 
@@ -60,7 +64,38 @@ final class NotificationManager {
 			return null;
 		}
 
-		return $this->dispatch( $message );
+		return $this->dispatch_for_site( $message, $event->site_id() );
+	}
+
+	/**
+	 * Dispatch a message only to channels permitted by the site's current policy.
+	 */
+	public function dispatch_for_site( NotificationMessage $message, int $site_id ): ?NotificationDeliveryResult {
+		$results = array();
+		foreach ( $this->senders as $channel_id => $sender ) {
+			if ( null !== $this->site_policy && ! $this->site_policy->allows_channel( $site_id, $channel_id ) ) {
+				continue;
+			}
+			$result = $this->send_to_channel( $sender, $channel_id, $message );
+			if ( null !== $result ) {
+				$results[] = $result;
+			}
+		}
+		return array() === $results ? null : new NotificationDeliveryResult( $results );
+	}
+
+	/**
+	 * Available channel IDs for assembling channel-specific digests.
+	 *
+	 * @return list<string>
+	 */
+	public function channel_ids(): array {
+		return array_keys( $this->senders );
+	}
+
+	public function dispatch_channel( NotificationMessage $message, string $channel_id ): ?NotificationChannelResult {
+		$sender = $this->senders[ $channel_id ] ?? null;
+		return null === $sender ? null : $this->send_to_channel( $sender, $channel_id, $message );
 	}
 
 	/**
@@ -90,6 +125,9 @@ final class NotificationManager {
 
 		$notification_type = $this->rule->classify( $event );
 		if ( null === $notification_type ) {
+			return null;
+		}
+		if ( null !== $this->site_policy && ( ! $this->site_policy->allows_type( $event->site_id(), $notification_type ) || ! $this->site_policy->allows_channel( $event->site_id(), $channel_id ) ) ) {
 			return null;
 		}
 

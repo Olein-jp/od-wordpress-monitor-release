@@ -34,6 +34,23 @@ final class CredentialService {
 	}
 
 	/**
+	 * Replace an existing credential without storing plaintext.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function replace( int $site_id, Credential $credential ) {
+		try {
+			$encrypted = $this->encryptor->encrypt( $credential->password() );
+		} catch ( Throwable $exception ) {
+			return new WP_Error( ErrorCode::ENCRYPTION_FAILED, __( 'The credential could not be encrypted.', 'od-wordpress-monitor' ) );
+		}
+
+		return $this->repository->update( $site_id, $credential->username(), $encrypted )
+			? true
+			: new WP_Error( 'DATABASE_ERROR', __( 'The credential could not be saved.', 'od-wordpress-monitor' ) );
+	}
+
+	/**
 	 * Decrypt a credential only when an outbound request needs it.
 	 *
 	 * @return Credential|WP_Error

@@ -53,6 +53,7 @@ final class NotificationSettingsPage {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html__( 'Notification Settings', 'od-wordpress-monitor' ); ?></h1>
+			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . SiteNotificationSettingsPage::SLUG ) ); ?>"><?php echo esc_html__( 'Configure notifications by site', 'od-wordpress-monitor' ); ?></a></p>
 			<?php $this->render_test_notice(); ?>
 			<?php settings_errors(); ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
